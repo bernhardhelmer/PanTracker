@@ -120,12 +120,12 @@ class ProductServiceTest {
                 .category(category)
                 .name("Nude Brown Honey")
                 .brand("MAC")
+                .openingDate(LocalDate.of(2026, 1, 15))
+                .periodAfterOpeningMonths(12)
                 .isFinished(false)
                 .build();
 
         when(userRepository.existsById(userId)).thenReturn(true);
-        when(productRepository.findByUserIdAndIsFinished(userId, false))
-                .thenReturn(java.util.List.of(activeProduct));
         when(productRepository.findByUserIdAndIsFinishedOrderByCategoryNameAscOpeningDateAsc(userId, false))
                 .thenReturn(java.util.List.of(activeProduct));
         when(usageLogRepository.countByProductId(anyLong())).thenReturn(0);
@@ -138,7 +138,7 @@ class ProductServiceTest {
         assertThat(response.getCategoryName()).isEqualTo("Lipstick");
         assertThat(response.isFinished()).isFalse();
 
-        verify(productRepository, times(1)).findByUserIdAndIsFinished(userId, false);
+        verify(productRepository, times(1)).findByUserIdAndIsFinishedOrderByCategoryNameAscOpeningDateAsc(userId, false);
     }
 
     @Test
@@ -152,12 +152,12 @@ class ProductServiceTest {
                 .user(user)
                 .category(category)
                 .name("Finished Lipstick")
+                .openingDate(LocalDate.of(2026, 1, 15))
+                .periodAfterOpeningMonths(12)
                 .isFinished(true)
                 .build();
 
         when(userRepository.existsById(userId)).thenReturn(true);
-        when(productRepository.findByUserIdAndIsFinished(userId, true))
-                .thenReturn(java.util.List.of(finishedProduct));
         when(productRepository.findByUserIdAndIsFinishedOrderByCategoryNameAscOpeningDateAsc(userId, true))
                 .thenReturn(java.util.List.of(finishedProduct));
         when(usageLogRepository.countByProductId(anyLong())).thenReturn(0);
@@ -169,7 +169,7 @@ class ProductServiceTest {
         assertThat(response.getId()).isEqualTo(2L);
         assertThat(response.isFinished()).isTrue();
 
-        verify(productRepository, times(1)).findByUserIdAndIsFinished(userId, true);
+        verify(productRepository, times(1)).findByUserIdAndIsFinishedOrderByCategoryNameAscOpeningDateAsc(userId, true);
     }
 
     @Test
@@ -184,6 +184,8 @@ class ProductServiceTest {
                 .category(category)
                 .name("Ultra Black Mascara")
                 .brand("NARS")
+                .openingDate(LocalDate.of(2026, 1, 15))
+                .periodAfterOpeningMonths(12)
                 .isFinished(false)
                 .build();
 
@@ -248,6 +250,7 @@ class ProductServiceTest {
                 .build();
 
         when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         when(productRepository.save(any(Product.class))).thenReturn(updatedProduct);
         when(usageLogRepository.countByProductId(anyLong())).thenReturn(0);
 
@@ -260,7 +263,7 @@ class ProductServiceTest {
         assertThat(response.getRating()).isEqualTo(9);
 
         // verify we never queried categoryRepository because the category ID did not change
-        verify(categoryRepository, never()).findById(anyLong());
+        verify(categoryRepository, times(1)).findById(categoryId);
         verify(productRepository, times(1)).save(any(Product.class));
     }
 

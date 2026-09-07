@@ -95,9 +95,9 @@ public class ProjectProductService {
         int currentUses = usageLogRepository.countByProductIdAndProjectId(productId, projectId);
 
         return ProjectProductResponse.builder()
-                .projectId(junction.getProject().getId())
+                .projectId(projectId)
                 .projectName(junction.getProject().getName())
-                .productId(junction.getProduct().getId())
+                .productId(productId)
                 .productName(junction.getProduct().getName())
                 .productBrand(junction.getProduct().getBrand())
                 .categoryName(junction.getProduct().getCategory().getName())
