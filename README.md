@@ -1,6 +1,6 @@
 # PanTracker
 
-Your personal cosmetics inventory and challenge tracker
+Your personal cosmetics inventory and challenge tracker designed to help users catalog cosmetic inventory and track progress within specific challenge constraints.
 
 ## Tech Stack
 
